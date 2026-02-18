@@ -11,16 +11,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Harsh-X-dev/grivience.io.git"
+    "url": "git+https://github.com/chikkuXcode/Grievance.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/Harsh-X-dev/grivience.io/issues"
+    "url": "https://github.com/chikkuXcode/Grievance/issues"
   },
-  "homepage": "https://github.com/Harsh-X-dev/grivience.io#readme",
+  "homepage": "https://github.com/chikkuXcode/Grievance#readme",
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
