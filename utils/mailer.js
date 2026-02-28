@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
 /**
  * Send a generic email via Brevo SMTP
@@ -8,40 +8,47 @@ const nodemailer = require('nodemailer');
  * @param {string} html - HTML body
  */
 const sendMail = async (to, toName, subject, html) => {
-  const host = process.env.SMTP_HOST || 'smtp-relay.brevo.com';
-  const port = process.env.SMTP_PORT || 587;
-  const user = process.env.SMTP_USER || 'a2be5b001@smtp-brevo.com';
-  const pass = process.env.SMTP_PASS || process.env.BREVO_API_KEY || ''; // Use SMTP_PASS or fall back to BREVO_API_KEY
-  const fromEmail = process.env.MAIL_FROM_EMAIL || 'chiks0950@gmail.com';
-  const fromName = process.env.MAIL_FROM_NAME || 'Grievance.io';
+  const host = process.env.SMTP_HOST || "smtp.gmail.com";
+  const port = process.env.SMTP_PORT || 465;
+  const user = process.env.SMTP_USER || "doraemonxdev@gmail.com";
+  const pass = process.env.SMTP_PASS || "xtgx assk wtju lojh"; // Use SMTP_PASS or fall back to BREVO_API_KEY
+  const fromEmail = process.env.MAIL_FROM_EMAIL || "chiks0950@gmail.com";
+  const fromName = process.env.MAIL_FROM_NAME || "Grievance.io";
 
   if (!pass) {
-    console.warn('[Mailer] SMTP Password (or Brevo API Key) not configured — set SMTP_PASS in .env to enable emails.');
-    return { success: false, message: 'Email not configured. Set SMTP_PASS in .env' };
+    console.warn(
+      "[Mailer] SMTP Password (or Brevo API Key) not configured — set SMTP_PASS in .env to enable emails.",
+    );
+    return {
+      success: false,
+      message: "Email not configured. Set SMTP_PASS in .env",
+    };
   }
 
   try {
     const transporter = nodemailer.createTransport({
       host,
       port,
-      secure: port == 465, // Use true for 465, false for other ports
+      secure: true, // Use true for 465, false for other ports
       auth: {
         user,
-        pass
-      }
+        pass,
+      },
     });
 
     const info = await transporter.sendMail({
       from: `"${fromName}" <${fromEmail}>`,
       to: `"${toName || to}" <${to}>`,
       subject,
-      html
+      html,
     });
 
-    console.log(`[Mailer] Email sent to ${to} via SMTP. MessageId: ${info.messageId}`);
+    console.log(
+      `[Mailer] Email sent to ${to} via SMTP. MessageId: ${info.messageId}`,
+    );
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error('[Mailer] SMTP Error:', error.message);
+    console.error("[Mailer] SMTP Error:", error.message);
     return { success: false, message: error.message };
   }
 };
@@ -49,7 +56,13 @@ const sendMail = async (to, toName, subject, html) => {
 /**
  * Send case resolved notification to student
  */
-const sendResolutionEmail = async (studentEmail, studentName, caseId, subject, remark) => {
+const sendResolutionEmail = async (
+  studentEmail,
+  studentName,
+  caseId,
+  subject,
+  remark,
+) => {
   const html = `
     <!DOCTYPE html>
     <html>
@@ -94,7 +107,7 @@ const sendResolutionEmail = async (studentEmail, studentName, caseId, subject, r
           </div>
 
           <div class="remark-box">
-            <p><strong>Resolution Note:</strong> ${remark || 'Your case has been resolved. Thank you for your patience.'}</p>
+            <p><strong>Resolution Note:</strong> ${remark || "Your case has been resolved. Thank you for your patience."}</p>
           </div>
 
           <p>If you feel the issue has not been fully addressed, you may reopen the case or file a new grievance through the student portal.</p>
@@ -108,7 +121,12 @@ const sendResolutionEmail = async (studentEmail, studentName, caseId, subject, r
     </body>
     </html>`;
 
-  return sendMail(studentEmail, studentName, `Case #${caseId} Resolved - Grievance.io`, html);
+  return sendMail(
+    studentEmail,
+    studentName,
+    `Case #${caseId} Resolved - Grievance.io`,
+    html,
+  );
 };
 
 /**
@@ -143,7 +161,7 @@ const sendPasswordResetEmail = async (email, name, otp) => {
         </div>
         <div class="body">
           <h2>Password Reset OTP</h2>
-          <p>Hi <strong>${name || 'User'}</strong>, use the OTP below to reset your password.</p>
+          <p>Hi <strong>${name || "User"}</strong>, use the OTP below to reset your password.</p>
           <div class="otp-box">${otp}</div>
           <p>This OTP is valid for <strong>10 minutes</strong>. Do not share it with anyone.</p>
           <div class="warning">&#9888;&#65039; If you did not request a password reset, please ignore this email. Your account is safe.</div>
@@ -156,7 +174,12 @@ const sendPasswordResetEmail = async (email, name, otp) => {
     </body>
     </html>`;
 
-  return sendMail(email, name || 'User', 'Password Reset OTP - Grievance.io', html);
+  return sendMail(
+    email,
+    name || "User",
+    "Password Reset OTP - Grievance.io",
+    html,
+  );
 };
 
 module.exports = { sendMail, sendResolutionEmail, sendPasswordResetEmail };
