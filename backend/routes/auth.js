@@ -172,11 +172,10 @@ router.post('/forgot-password', async (req, res) => {
         }
 
         // Check if Brevo is configured before generating OTP
-        const brevoKey = process.env.BREVO_API_KEY || '';
-        if (!brevoKey || brevoKey === 'your_brevo_api_key_here') {
+        if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
             return res.status(503).json({
                 success: false,
-                message: 'Email service is not configured. Please contact the administrator to set up Brevo API key.'
+                message: 'Email service is not configured.'
             });
         }
 
