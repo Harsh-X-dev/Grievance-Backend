@@ -1,33 +1,31 @@
 const nodemailer = require("nodemailer");
 
 const sendMail = async (to, toName, subject, html) => {
-  const user = process.env.EMAIL_USER;
-  const pass = process.env.EMAIL_PASS;
-  const fromName = process.env.MAIL_FROM_NAME || "Grievance.io";
+  try {
+    const user = process.env.EMAIL_USER;
+    const pass = process.env.EMAIL_PASS;
+    const fromName = process.env.MAIL_FROM_NAME || "Grievance.io";
 
-  if (!user || !pass) {
-    console.error("Gmail credentials not configured.");
-    return { success: false, message: "SMTP not configured" };
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: { user, pass },
+    });
+
+    const info = await transporter.sendMail({
+      from: `"${fromName}" <${user}>`,
+      to: `"${toName || to}" <${to}>`,
+      subject,
+      html,
+    });
+
+    console.log("EMAIL SENT:", info.messageId);
+    return { success: true };
+
+  } catch (error) {
+    console.error("EMAIL ERROR:", error);
+    return { success: false, error };
   }
-
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user,
-      pass,
-    },
-  });
-
-  const info = await transporter.sendMail({
-    from: `"${fromName}" <${user}>`,
-    to: `"${toName || to}" <${to}>`,
-    subject,
-    html,
-  });
-
-  return { success: true, messageId: info.messageId };
 };
-/**
  * Send case resolved notification to student
  */
 const sendResolutionEmail = async (
