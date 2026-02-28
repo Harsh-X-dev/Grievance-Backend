@@ -1,59 +1,36 @@
 const nodemailer = require("nodemailer");
 
-/**
- * Send a generic email via Brevo SMTP
- * @param {string} to - Recipient email
- * @param {string} toName - Recipient name
- * @param {string} subject - Email subject
- * @param {string} html - HTML body
- */
 const sendMail = async (to, toName, subject, html) => {
-const host = process.env.SMTP_HOST || "smtp-relay.brevo.com";
-const port = process.env.SMTP_PORT || 587;
-const user = process.env.SMTP_USER;
-const pass = process.env.SMTP_PASS;
-const port = process.env.SMTP_PORT || 465;
-const user = process.env.SMTP_USER;
-const pass = process.env.SMTP_PASS;
-const fromEmail = process.env.MAIL_FROM_EMAIL || "chiks0950@gmail.com";
-const fromName = process.env.MAIL_FROM_NAME || "Grievance.io";
+  const host = process.env.SMTP_HOST || "smtp-relay.brevo.com";
+  const port = process.env.SMTP_PORT || 587;
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+  const fromEmail = process.env.MAIL_FROM_EMAIL;
+  const fromName = process.env.MAIL_FROM_NAME || "Grievance.io";
 
-  if (!pass) {
-    console.warn(
-      "[Mailer] SMTP Password (or Brevo API Key) not configured — set SMTP_PASS in .env to enable emails.",
-    );
-    return {
-      success: false,
-      message: "Email not configured. Set SMTP_PASS in .env",
-    };
+  if (!user || !pass) {
+    console.error("SMTP credentials not configured.");
+    return { success: false, message: "SMTP not configured" };
   }
 
-  try {
-    const transporter = nodemailer.createTransport({
-      host,
-      port,
-      secure: false, // IMPORTANT: false for 587
-      auth: {
-        user,
-        pass,
-      },
-    });
+  const transporter = nodemailer.createTransport({
+    host,
+    port,
+    secure: false, // Brevo uses 587
+    auth: {
+      user,
+      pass,
+    },
+  });
 
-    const info = await transporter.sendMail({
-      from: `"${fromName}" <${fromEmail}>`,
-      to: `"${toName || to}" <${to}>`,
-      subject,
-      html,
-    });
+  const info = await transporter.sendMail({
+    from: `"${fromName}" <${fromEmail}>`,
+    to: `"${toName || to}" <${to}>`,
+    subject,
+    html,
+  });
 
-    console.log(
-      `[Mailer] Email sent to ${to} via SMTP. MessageId: ${info.messageId}`,
-    );
-    return { success: true, messageId: info.messageId };
-  } catch (error) {
-    console.error("[Mailer] SMTP Error:", error.message);
-    return { success: false, message: error.message };
-  }
+  return { success: true, messageId: info.messageId };
 };
 
 /**
