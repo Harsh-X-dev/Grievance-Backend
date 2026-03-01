@@ -641,22 +641,30 @@
       });
 
       // Render a hidden Google button — our custom buttons trigger it
-      const hiddenContainer = document.getElementById('google-btn-hidden-container');
-      google.accounts.id.renderButton(hiddenContainer, {
-        type: 'standard',
-        theme: 'outline',
-        size: 'large',
-        text: 'signin_with'
-      });
+const hiddenContainer = document.getElementById('google-btn-hidden-container');
 
-      const triggerGoogleSignIn = () => {
-        const gBtn = hiddenContainer.querySelector('[role="button"], button, div[tabindex]');
-        if (gBtn) {
-          gBtn.click();
-        } else {
-          google.accounts.id.prompt();
-        }
-      };
+if (hiddenContainer) {
+  google.accounts.id.renderButton(hiddenContainer, {
+    type: 'standard',
+    theme: 'outline',
+    size: 'large',
+    text: 'signin_with'
+  });
+}
+
+const triggerGoogleSignIn = () => {
+  if (!hiddenContainer) {
+    google.accounts.id.prompt();
+    return;
+  }
+
+  const gBtn = hiddenContainer.querySelector('[role="button"], button, div[tabindex]');
+  if (gBtn) {
+    gBtn.click();
+  } else {
+    google.accounts.id.prompt();
+  }
+};
 
       document.getElementById('btn-login-google').addEventListener('click', triggerGoogleSignIn);
       document.getElementById('btn-register-google').addEventListener('click', triggerGoogleSignIn);
