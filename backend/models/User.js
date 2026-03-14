@@ -26,6 +26,14 @@ const userSchema = new mongoose.Schema({
     },
     department: {
         type: String,
+        enum: [
+            '',
+            'Academic Affairs',
+            'Administration',
+            'Facilities & Infrastructure',
+            'IT & Technical Support',
+            'Student Welfare & Discipline'
+        ],
         default: ''
     },
     phone: {
