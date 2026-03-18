@@ -108,12 +108,25 @@ router.get("/my", protect, restrictTo("student"), async (req, res) => {
 // @route   GET /api/cases/department
 // @desc    Get cases for admin's department
 // @access  Private (admin)
-router.get("/department", protect, restrictTo("admin"), async (req, res) => {
+router.get("/department", protect, async (req, res) => {
   try {
-    const { status } = req.query;
+    if (req.user.role !== "admin") {
+      return res
+        .status(403)
+        .json({ success: false, message: "Admin access required" });
+    }
+
+    const { status, search } = req.query;
     const filter = { department: req.user.department };
 
     if (status && status !== "All Status") filter.status = status;
+    if (search) {
+      filter.$or = [
+        { caseId: { $regex: search, $options: "i" } },
+        { subject: { $regex: search, $options: "i" } },
+        { studentName: { $regex: search, $options: "i" } },
+      ];
+    }
 
     const cases = await Case.find(filter)
       .sort({ createdAt: -1 })
@@ -135,8 +148,14 @@ router.get("/all", protect, restrictTo("superadmin"), async (req, res) => {
 
     if (status) filter.status = status;
     if (department) filter.department = department;
-    if (search) filter.caseId = { $regex: search, $options: "i" };
-
+    if (search) {
+      filter.$or = [
+        { caseId: { $regex: search, $options: "i" } },
+        { subject: { $regex: search, $options: "i" } },
+        { studentName: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+      ];
+    }
     const cases = await Case.find(filter)
       .sort({ createdAt: -1 })
       .select("-messages");
@@ -222,13 +241,7 @@ router.get("/:id", protect, async (req, res) => {
       return res.status(403).json({ success: false, message: "Access denied" });
     }
 
-    // Filter internal notes for students
-    let messages = caseDoc.messages;
-    if (req.user.role === "student") {
-      messages = messages.filter((m) => !m.isInternal);
-    }
-
-    res.json({ success: true, case: { ...caseDoc.toObject(), messages } });
+    res.json({ success: true, case: caseDoc });
   } catch (err) {
     console.error("[Cases] Get by ID error:", err.message);
     res.status(500).json({ success: false, message: "Server error" });
