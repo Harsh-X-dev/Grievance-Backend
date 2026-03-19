@@ -56,7 +56,7 @@ router.post(
       // Map category to department (1:1 mapping)
       const deptMap = {
         "Academic Affairs": "Academic Affairs",
-        "Administration": "Administration",
+        Administration: "Administration",
         "Facilities & Infrastructure": "Facilities & Infrastructure",
         "IT & Technical Support": "IT & Technical Support",
         "Student Welfare & Discipline": "Student Welfare & Discipline",
@@ -120,11 +120,12 @@ router.get("/department", protect, async (req, res) => {
     const filter = { department: req.user.department };
 
     if (status && status !== "All Status") filter.status = status;
-    if (search) {
+    const normalizedSearch = (search || "").trim().replace(/^#/, "");
+    if (normalizedSearch) {
       filter.$or = [
-        { caseId: { $regex: search, $options: "i" } },
-        { subject: { $regex: search, $options: "i" } },
-        { studentName: { $regex: search, $options: "i" } },
+        { caseId: { $regex: normalizedSearch, $options: "i" } },
+        { subject: { $regex: normalizedSearch, $options: "i" } },
+        { studentName: { $regex: normalizedSearch, $options: "i" } },
       ];
     }
 
@@ -447,7 +448,7 @@ router.put(
       }
 
       // Only allow resolving from "Pending", "In Progress" or "Escalated"
-      if (!['Pending', 'In Progress', 'Escalated'].includes(caseDoc.status)) {
+      if (!["Pending", "In Progress", "Escalated"].includes(caseDoc.status)) {
         return res.status(400).json({
           success: false,
           message: `Cannot resolve a case that is "${caseDoc.status}". Only "In Progress" or "Escalated" cases can be resolved.`,
