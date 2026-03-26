@@ -65,7 +65,7 @@ mongoose
   .connect(MONGO_URI)
   .then(() => {
     console.log("✅ MongoDB connected:", MONGO_URI);
-//    app.listen(PORT, () => {
+    app.listen(PORT, () => {
       console.log(`🚀 Server running at http://localhost:${PORT}`);
       console.log(`📡 API base: http://localhost:${PORT}/api`);
       console.log(
