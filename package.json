@@ -1,7 +1,7 @@
 {
   "name": "grivience.io",
   "version": "1.0.0",
-  "description": "ids==>\r admin@demo.com\r student@demo.com\r super@demo.com",
+  "description": "Grievance.io is a comprehensive grievance management system designed to streamline the process of handling complaints and feedback. It provides a user-friendly interface for both users and administrators, allowing for efficient tracking, resolution, and analysis of grievances. The system includes features such as complaint submission, status tracking, communication tools, and reporting capabilities to ensure that grievances are addressed in a timely and effective manner.",
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
@@ -11,16 +11,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chikkuXcode/Grievance.git"
+    "url": "git+ https://github.com/Harsh-X-dev/Grievance-Backend.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/chikkuXcode/Grievance/issues"
-  },
-  "homepage": "https://github.com/chikkuXcode/Grievance#readme",
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
